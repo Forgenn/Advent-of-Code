@@ -1,7 +1,7 @@
 
 
 def part1():
-    f = open("input.txt", "r")
+    f = open("anoninput.txt.txt", "r")
     lines = [line.rstrip('\n') for line in f]
 
     treeCount = 0
@@ -50,4 +50,4 @@ def part2():
 
     print(result)
 
-part2()
+part1()
