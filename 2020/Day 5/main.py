@@ -54,8 +54,9 @@ def part2():
     i = 0
     seats = sorted(seats)
     for seat in seats:
-        if seats[i + 1] != seat + 1:
-            print("Gold:", int(seat + 1))
+        if i != len(seats) - 1:
+            if seats[i + 1] != seat + 1:
+                print("Gold:", int(seat + 1))
         i += 1
 part2()
 
