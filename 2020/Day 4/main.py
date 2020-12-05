@@ -48,6 +48,7 @@ def part2():
 
             if hgt:
                 resulthgt = re.split(r'(\d+)', hgt)
+
                 if (resulthgt[2] == 'cm' and 150 <= int(resulthgt[1]) <= 193) or (resulthgt[2] == 'in' and 59 <= int(resulthgt[1]) <= 76):
                     height = True
 
