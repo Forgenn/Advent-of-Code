@@ -19,7 +19,7 @@ def part1():
     print("Silver:", result)
 
 def part2():
-    f = open("input.txt", "r")
+    f = open("verybigboy6.txt", "r")
     lines = [line.rstrip('\n') for line in f]
 
     answers = {}
@@ -52,3 +52,5 @@ def part2():
     print("Gold:", result)
 
 part2()
+
+
