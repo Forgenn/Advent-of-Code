@@ -42,6 +42,8 @@ def part2():
         iterations += 1
     print(total)
 
+def part1():
+
 part1()
 part2()
 
