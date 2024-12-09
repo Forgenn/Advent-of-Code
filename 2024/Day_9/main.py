@@ -57,32 +57,34 @@ class Day(MainHelper):
 
             data_copy = data[:]
             already_moved = set()
-            for i in range(len(data_copy) - 1, -1, -1):
-                print("".join(int(datain[1]) * str(datain[2]) for datain in data))
+            offset = 0
+            i = len(data_copy) - 1
+            while i >= 0:
                 (chunk_type, chunk_value, file_id) = data[i]
-                if chunk_type == "FILE_ID" and file_id:
-                    (
-                        found_chunk_idx,
-                        diff,
-                    ) = find_chunk(data[:i], chunk_value)
+                if chunk_type == "FILE_ID" :
+                    (found_chunk_idx, diff) = find_chunk(data[:i], chunk_value)
                     if found_chunk_idx == "" and diff == "" or found_chunk_idx >= i:
-                        already_moved.add(file_id)
+                        i -= 1
                         continue
                     old_data = data[i]
                     data.insert(found_chunk_idx, data[i])
-                    # already_moved.add(file_id)
                     data[i + 1] = ("GAP", chunk_value, ".")
                     if diff == 0:
                         del data[found_chunk_idx + 1]
                     else:
                         data[found_chunk_idx + 1] = ("GAP", diff, ".")
+                    # REctify inserting into data
+                    i += 1
 
                 if chunk_type == "GAP" and chunk_value:
+                    offset = 0
+                    i -= 1
                     continue
+                i -= 1
+
 
             result = 0
             n_current = 0
-
             for i, (type, file_chunk, file_id) in enumerate(data):
                 for j in range(file_chunk):
                     if type == "FILE_ID":
