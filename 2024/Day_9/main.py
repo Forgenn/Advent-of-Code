@@ -10,7 +10,6 @@ class Day(MainHelper):
         super().__init__(os.path.join(os.path.dirname(__file__), "input.txt"))
 
     def part1(self):
-        return "early stop"
         with open(self.input_file) as input:
             line = input.readline().strip()
             data = []
@@ -61,7 +60,7 @@ class Day(MainHelper):
             i = len(data_copy) - 1
             while i >= 0:
                 (chunk_type, chunk_value, file_id) = data[i]
-                if chunk_type == "FILE_ID" :
+                if chunk_type == "FILE_ID":
                     (found_chunk_idx, diff) = find_chunk(data[:i], chunk_value)
                     if found_chunk_idx == "" and diff == "" or found_chunk_idx >= i:
                         i -= 1
@@ -81,7 +80,6 @@ class Day(MainHelper):
                     i -= 1
                     continue
                 i -= 1
-
 
             result = 0
             n_current = 0

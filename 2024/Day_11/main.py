@@ -34,7 +34,7 @@ class Day(MainHelper):
     def part1(self):
         with open(self.input_file) as input:
             pebbles = input.readline().strip().split()
-            for _ in range(26):
+            for _ in range(25):
                 i = 0
                 while i < len(pebbles):
                     if pebbles[i] == "0":
@@ -48,7 +48,7 @@ class Day(MainHelper):
                     else:
                         pebbles[i] = str(int(pebbles[i]) * 2024)
                     i += 1
-                print("{:.2f}%".format(((_ + 1) / 75) * 100), end="\r")
+                print("{:.2f}%".format(((_ + 1) / 25) * 100), end="\r")
             return len(pebbles)
 
     def part2(self):
@@ -77,7 +77,7 @@ class Day(MainHelper):
             print("{:.2f}%".format(((blinks + 1) / 75) * 100), end="\r")
             return sum(calculate_blink(x, blinks - 1) for x in values)
 
-        return sum(calculate_blink(pebble, 26) for pebble in pebbles)
+        return sum(calculate_blink(pebble, 75) for pebble in pebbles)
 
 
 cache = {}
