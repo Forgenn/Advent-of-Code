@@ -1,4 +1,5 @@
 import os
+import pprint
 
 
 class MainHelper:
@@ -12,5 +13,7 @@ class MainHelper:
         return NotImplementedError("Not implemented")
 
     def runner(self):
-        print("Part 1:", self.part1())
-        print("Part 2:", self.part2())
+        print("Part 1:", end=" ")
+        pprint.pprint(self.part1())
+        print("Part 2:", end=" ")
+        pprint.pprint(self.part2())

@@ -8,7 +8,11 @@
             "name": "Python Debugger: Module",
             "type": "debugpy",
             "request": "launch",
+<<<<<<< HEAD
             "module": "Day_15.main"
+=======
+            "module": "Day_16.main"
+>>>>>>> c1d4249 (Part 1 weird)
         }
     ]
 }
