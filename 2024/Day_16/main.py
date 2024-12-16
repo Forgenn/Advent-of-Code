@@ -15,11 +15,14 @@ class Day(MainHelper):
     def part1(self):
 
         def get_adjacent(grid, coord):
-            x, y = coord
+            x, y, (dxi, dyi) = coord
             adjacent = []
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                if grid[(x + dx, y + dy)] == "." or grid[(x + dx, y + dy)] == "S":
-                    adjacent.append((x + dx, y + dy))
+                if grid[(x + dx, y + dy)] != "#":
+                    if (dx, dy) == (dxi, dyi):  # going straight
+                        adjacent.append((1, (x + dx, y + dy, (dxi, dyi))))
+                    else:  # turning
+                        adjacent.append((1001, (x + dx, y + dy, (dx, dy))))
             return adjacent
 
         with open(self.input_file) as input:
@@ -34,62 +37,49 @@ class Day(MainHelper):
             max_x = max(x for x, y in grid)
             max_y = max(y for x, y in grid)
 
-            distances = {key: 9999999 for key in grid}
-            directions = {key: None for key in grid}
-
             end = None
             start = None
+            start_dir = (1, 0)
             for (x, y), char in grid.items():
-                if char == "E":
-                    start = (x, y)
-                elif char == "S":
+                if char == "S":
+                    start = (x, y, start_dir)
+                elif char == "E":
                     end = (x, y)
-
-            distances[start] = 0
-            visited = set()
-            queue = [(start, 0)]
-            directions[start] = (0, -1)
+            p1 = None
+            distances = {key: 9999999 for key in grid}
+            queue = [(0, start)]
+            from_ = defaultdict(set)
 
             while queue:
-                u = queue.pop(0)
+                dist, (cx, cy, cd) = queue.pop(0)
 
-                for nbr in get_adjacent(grid, u[0]):
-                    if nbr in visited:
-                        continue
-                    cur_direction = directions[u[0]]
-                    # New step
-                    new_dist = u[1] + 1
+                if (cx, cy) == end:
+                    if not p1:
+                        p1 = dist
 
-                    # changing directions
-                    if (
-                        nbr[0] - cur_direction[0] != u[0][0]
-                        and cur_direction in ((0, -1), (0, 1))
-                        or nbr[1] - cur_direction[1] != u[0][1]
-                        and cur_direction in ((1, 0), (-1, 0))
-                    ):
-                        new_dist = u[1] + 1000 + 1
+                for d, (nx, ny, (ndx, ndy)) in get_adjacent(grid, (cx, cy, cd)):
+                    nbr = (nx, ny)
+                    nbr_d = (nx, ny, (ndx, ndy))
+                    if dist + d < distances[nbr]:
+                        distances[nbr] = dist + d
+                        queue.append((distances[nbr], nbr_d))
+                        from_[nbr] = {(cx, cy, cd)}
+                    elif dist + d <= distances[nbr]:
+                        from_[nbr].add((cx, cy, cd))
 
-                    directions[nbr] = (nbr[0] - u[0][0], nbr[1] - u[0][1])
-
-                    if new_dist < distances[nbr]:
-                        distances[nbr] = new_dist
-                        if nbr not in visited:
-                            visited.add(nbr)
-                            queue.append((nbr, new_dist))
-                            queue.sort(key=lambda x: x[1])
-                if queue:
-                    grid[queue[0][0]] = "!"
-                # Remove the current node from the queue
-            return distances[end]
+        return distances[end]
 
     def part2(self):
 
         def get_adjacent(grid, coord):
-            x, y = coord
+            x, y, (dxi, dyi) = coord
             adjacent = []
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                 if grid[(x + dx, y + dy)] != "#":
-                    adjacent.append((x + dx, y + dy))
+                    if (dx, dy) == (dxi, dyi):  # going straight
+                        adjacent.append((1, (x + dx, y + dy, (dxi, dyi))))
+                    else:  # turning
+                        adjacent.append((1001, (x + dx, y + dy, (dx, dy))))
             return adjacent
 
         with open(self.input_file) as input:
@@ -104,53 +94,60 @@ class Day(MainHelper):
             max_x = max(x for x, y in grid)
             max_y = max(y for x, y in grid)
 
-            distances = {key: 9999999 for key in grid}
-            directions = {key: None for key in grid}
-
             end = None
             start = None
+            start_dir = (1, 0)
             for (x, y), char in grid.items():
                 if char == "S":
-                    start = (x, y)
+                    start = (x, y, start_dir)
                 elif char == "E":
                     end = (x, y)
-
-            distances[start] = 0
-            visited = set()
-            queue = [(start, 0)]
-            directions[start] = (0, -1)
+            p1 = None
+            distances = {
+                (*key, dir): 9999999
+                for key in grid
+                for dir in [(-1, 0), (1, 0), (0, -1), (0, 1)]
+            }
+            queue = [(0, start)]
+            best_paths = defaultdict(set)
 
             while queue:
-                u = queue.pop(0)
+                dist, (cx, cy, cd) = queue.pop(0)
 
-                for nbr in get_adjacent(grid, u[0]):
-                    if nbr in visited:
-                        continue
-                    cur_direction = directions[u[0]]
-                    # New step
-                    new_dist = u[1] + 1
+                if (cx, cy) == end:
+                    if not p1:
+                        p1 = dist
 
-                    # changing directions
-                    if (
-                        nbr[0] - cur_direction[0] != u[0][0]
-                        and cur_direction in ((0, -1), (0, 1))
-                        or nbr[1] - cur_direction[1] != u[0][1]
-                        and cur_direction in ((1, 0), (-1, 0))
-                    ):
-                        new_dist = u[1] + 1000 + 1
+                for d, (nx, ny, (ndx, ndy)) in get_adjacent(grid, (cx, cy, cd)):
+                    nbr = (nx, ny)
+                    nbr_d = (nx, ny, (ndx, ndy))
+                    if dist + d < distances[nbr_d]:
+                        distances[nbr_d] = dist + d
+                        queue.append((distances[nbr_d], nbr_d))
+                        best_paths[nbr_d] = {(cx, cy, cd)}
+                    elif dist + d <= distances[nbr_d]:
+                        best_paths[nbr_d].add((cx, cy, cd))
 
-                    directions[nbr] = (nbr[0] - u[0][0], nbr[1] - u[0][1])
+        min_path_cost = 9999999
+        if end:
+            smallest = 9999999
+            for (x, y, _), dist in distances.items():
+                if (x, y) == end:
+                    smallest = min(smallest, dist)
+            min_path_cost = smallest
 
-                    if new_dist < distances[nbr]:
-                        distances[nbr] = new_dist
-                        if nbr not in visited:
-                            visited.add(nbr)
-                            queue.append((nbr, new_dist))
-                            queue.sort(key=lambda x: x[1])
-                if queue:
-                    grid[queue[0][0]] = "!"
-                # Remove the current node from the queue
-            return distances[end]
+        stack = [(*end, (0, -1))]
+        gnodes = set(stack)
+        # Backtrack from end to start, while only using best possible paths from/to nodoes
+        while len(stack) > 0:
+            some = stack.pop(-1)
+            for other in best_paths[some]:
+                if other not in gnodes:
+                    gnodes.add(other)
+                    stack.append(other)
+
+        gnodes = set(x[:2] for x in gnodes)
+        print(len(gnodes))
 
 
 cache = {}
