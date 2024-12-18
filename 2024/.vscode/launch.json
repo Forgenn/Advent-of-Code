@@ -8,7 +8,7 @@
             "name": "Python Debugger: Module",
             "type": "debugpy",
             "request": "launch",
-            "module": "Day_17.main"
+            "module": "Day_18.main"
         }
     ]
 }
